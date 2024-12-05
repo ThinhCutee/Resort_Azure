@@ -1,9 +1,8 @@
 <?php
 // Kết nối đến cơ sở dữ liệu
 include("essentials.php");
-function connect()
-{
-    $host = 'localhost';
+function connect() {
+    $host = 'localhost:3307';
     $db_name = 'azuredb';
     $username = 'root';
     $password = '';
@@ -13,41 +12,40 @@ function connect()
         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         $conn->exec("set names utf8");
         return $conn;
-    } catch (PDOException $e) {
+    } catch(PDOException $e) {
         echo 'Lỗi kết nối: ' . $e->getMessage();
         return null;
     }
 }
 
 // Đăng nhập
-function login1($admin_name, $admin_pass)
-{
+function login1($admin_name, $admin_pass) {
     $conn = connect();
 
     if ($conn) {
         $query = 'SELECT * FROM admin WHERE admin_name = :admin_name AND admin_pass = :admin_pass AND trang_thai = 1';
         $stmt = $conn->prepare($query);
-
+        
         // $admin_pass = md5($admin_pass);
-
+        
         $stmt->bindParam(':admin_name', $admin_name);
         $stmt->bindParam(':admin_pass', $admin_pass);
-
+        
         $stmt->execute();
-
+        
         $count = $stmt->rowCount();
-
-        if ($count > 0) {
+        
+        if($count > 0) {
             $_SESSION['adminLogin'] = $admin_name;
             alert('success', 'Login successful - Đăng nhập thành công !');
             direct('./dashboard/index.php');
         } else {
             alert('error', 'Login fail - Sai tên đăng nhập/ mật khẩu hoặc tài khoản đã dừng hoạt động !');
+            
         }
     }
 }
-function login($admin_name, $admin_pass)
-{
+function login($admin_name, $admin_pass) {
     $conn = connect();
 
     if ($conn) {
@@ -56,19 +54,19 @@ function login($admin_name, $admin_pass)
                   JOIN nhanvien n ON a.id = n.id_admin
                   WHERE a.admin_name = :admin_name AND a.admin_pass = :admin_pass AND a.trang_thai = 1';
         $stmt = $conn->prepare($query);
-
+        
         // $admin_pass = md5($admin_pass); // Nếu mật khẩu cần mã hóa MD5, bạn có thể bỏ comment dòng này
 
         $stmt->bindParam(':admin_name', $admin_name);
         $stmt->bindParam(':admin_pass', $admin_pass);
-
+        
         $stmt->execute();
-
+        
         $count = $stmt->rowCount();
-
+        
         if ($count > 0) {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
+            
             // Lưu thông tin đăng nhập vào session
             $_SESSION['adminLogin'] = $admin_name;
             $_SESSION['phong_ban'] = $user['phong_ban'];  // Lưu phòng ban vào session
@@ -108,35 +106,34 @@ function login($admin_name, $admin_pass)
     }
 }
 function show($query)
-{
-    $conn = connect();
-    // Câu truy vấn
+    {
+        $conn = connect();   
+        // Câu truy vấn
 
-    // Thực hiện truy vấn
-    $stmt = $conn->prepare($query);
-    $stmt->execute();
-
-    // Lấy kết quả
-    $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
-    return  $result;
-}
-function showTK($query, $params = array())
-{
-    try {
-        $conn = connect();
-
+        // Thực hiện truy vấn
         $stmt = $conn->prepare($query);
-        $stmt->execute($params);
+        $stmt->execute();
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    } catch (PDOException $e) {
-        throw new Exception($e->getMessage());
+        // Lấy kết quả
+        $result = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return  $result;
     }
-}
-
+    function showTK($query, $params = array()) {
+        try {
+            $conn = connect();
+    
+            $stmt = $conn->prepare($query);
+            $stmt->execute($params);
+    
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            throw new Exception($e->getMessage());
+        }
+    }
+    
 function option_khachsan()
 {
-
+    
     $conn = connect();
     // Truy vấn để lấy danh sách khách sạn
     $sql = "SELECT id, ten_khach_san FROM khachsan";
@@ -147,10 +144,11 @@ function option_khachsan()
     while ($row = $stmt->fetch()) {
         echo "<option value='" . $row['id'] . "'>" . $row['ten_khach_san'] . "</option>";
     }
+       
 }
 function option_goidichvu()
 {
-
+    
     $conn = connect();
     // Truy vấn để lấy danh sách khách sạn
     $sql = "SELECT id, ten_goi_dich_vu FROM goidichvu";
@@ -161,10 +159,11 @@ function option_goidichvu()
     while ($row = $stmt->fetch()) {
         echo "<option value='" . $row['id'] . "'>" . $row['ten_goi_dich_vu'] . "</option>";
     }
+       
 }
 function option_hangphong()
 {
-
+    
     $conn = connect();
     // Truy vấn để lấy danh sách khách sạn
     $sql = "SELECT id, hang_phong FROM phong";
@@ -175,10 +174,11 @@ function option_hangphong()
     while ($row = $stmt->fetch()) {
         echo "<option value='" . $row['id'] . "'>" . $row['ten_goi_dich_vu'] . "</option>";
     }
+       
 }
 function option_uudai()
 {
-
+    
     $conn = connect();
     // Truy vấn để lấy danh sách ưu đãi còn trong thời gian đặt phòng
     $sql = "SELECT id, ten_uu_dai FROM uudai WHERE ngay_ket_thuc >= now()";
@@ -189,6 +189,7 @@ function option_uudai()
     while ($row = $stmt->fetch()) {
         echo "<option value='" . $row['id'] . "'>" . $row['ten_uu_dai'] . "</option>";
     }
+       
 }
 
 function ten_khachsan($khachSanID)
@@ -209,10 +210,10 @@ function ten_khachsan($khachSanID)
     }
 }
 function insertPhong($khachSanID, $soPhong, $soNguoi, $gia, $hangPhong, $hinhAnh, $trangThai, $tenPhong, $dienTich, $loaiPhong)
-{
-    $conn = connect();
+    {
+        $conn = connect();
 
-    // SQL statement for prepared statement
+        // SQL statement for prepared statement
     // Check if the room number already exists
     $check_sql = "SELECT COUNT(*) FROM phong WHERE so_phong = :soPhong";
     $stmt_check = $conn->prepare($check_sql);
@@ -222,7 +223,7 @@ function insertPhong($khachSanID, $soPhong, $soNguoi, $gia, $hangPhong, $hinhAnh
 
     if ($count > 0) {
         throw new Exception("Số phòng đã tồn tại. Vui lòng chọn một số phòng khác.");
-    } else {
+    }else{
         $sql = "INSERT INTO 
         phong (so_phong, ten_phong ,id_khach_san, gia, dien_tich, so_nguoi ,loai_phong, hang_phong, trang_thai, hinh_anh) 
         VALUES 
@@ -243,9 +244,8 @@ function insertPhong($khachSanID, $soPhong, $soNguoi, $gia, $hangPhong, $hinhAnh
     $stmt->bindParam(':hinhAnh', $hinhAnh);
 
     $stmt->execute();
-}
-function deletePhong($id)
-{
+    }
+function deletePhong($id) {
     try {
         $conn = connect();
 
@@ -285,8 +285,7 @@ function deletePhong($id)
     return $response;
 }
 //
-function updatePhong($id, $khachSanID, $soPhong, $tenPhong, $gia, $hangPhong, $loaiPhong, $dienTich, $songuoi, $trangThai, $hinhAnh)
-{
+function updatePhong($id, $khachSanID, $soPhong, $tenPhong, $gia, $hangPhong, $loaiPhong, $dienTich, $songuoi, $trangThai, $hinhAnh) {
     try {
         $conn = connect();
 
@@ -296,7 +295,7 @@ function updatePhong($id, $khachSanID, $soPhong, $tenPhong, $gia, $hangPhong, $l
                trang_thai = :trangThai ";
 
         // Nếu có hình ảnh mới được chọn, cập nhật hình ảnh
-        if ($hinhAnh != null) {
+        if($hinhAnh != null) {
             $sql .= ", hinh_anh = :hinhAnh ";
         }
 
@@ -315,13 +314,14 @@ function updatePhong($id, $khachSanID, $soPhong, $tenPhong, $gia, $hangPhong, $l
         $stmt->bindParam(':trangThai', $trangThai, PDO::PARAM_INT);
 
         // Nếu có hình ảnh mới được chọn, gắn giá trị vào prepare statement
-        if ($hinhAnh != null) {
+        if($hinhAnh != null) {
             $stmt->bindParam(':hinhAnh', $hinhAnh, PDO::PARAM_STR);
-            if ($stmt->execute())
+            if ($stmt->execute()) 
                 $response = array(
                     'status' => 'success',
                     'message' => 'Cập nhật thành công'
                 );
+            
         }
 
         if ($stmt->execute()) {
@@ -329,7 +329,8 @@ function updatePhong($id, $khachSanID, $soPhong, $tenPhong, $gia, $hangPhong, $l
                 'status' => 'success',
                 'message' => 'Cập nhật thành công'
             );
-        } else {
+        } 
+        else {
             $errorInfo = $stmt->errorInfo();
             $response = array(
                 'status' => 'error',
@@ -354,8 +355,7 @@ function updatePhong($id, $khachSanID, $soPhong, $tenPhong, $gia, $hangPhong, $l
     return $response;
 }
 // ưu đãi
-function insertUuDai($id, $giaGiam, $tenUuDai, $moTa, $ngayBatDau, $ngayKetThuc)
-{
+function insertUuDai($id, $giaGiam, $tenUuDai, $moTa, $ngayBatDau, $ngayKetThuc){
     $conn = connect();
     // SQL statement for prepared statement
     $sql = "INSERT INTO uudai (id, ten_uu_dai, mo_ta, gia_giam, ngay_bat_dau, ngay_ket_thuc) 
@@ -373,8 +373,7 @@ function insertUuDai($id, $giaGiam, $tenUuDai, $moTa, $ngayBatDau, $ngayKetThuc)
     $stmt->execute();
 }
 
-function deleteUuDai($id)
-{
+function deleteUuDai($id){
     if ($id) {
         try {
             $conn = connect();
@@ -420,56 +419,44 @@ function deleteUuDai($id)
     return $response;
 }
 
-function updateUuDai($id, $giaGiam, $tenUuDai, $moTa, $ngayBatDau, $ngayKetThuc)
-{
+function updateUuDai($id, $giaGiam, $tenUuDai, $moTa, $ngayBatDau, $ngayKetThuc){
     $conn = connect();
 
-    // SQL statement for prepared statement
-    $sql = "UPDATE uudai 
+        // SQL statement for prepared statement
+        $sql = "UPDATE uudai 
                 SET ten_uu_dai = :tenUuDai, mo_ta = :moTa, gia_giam = :giaGiam, ngay_bat_dau = :ngayBatDau, ngay_ket_thuc = :ngayKetThuc 
                 WHERE id = :id";
 
-    // Prepare and execute statement
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':id', $id);
-    $stmt->bindParam(':tenUuDai', $tenUuDai);
-    $stmt->bindParam(':moTa', $moTa);
-    $stmt->bindParam(':giaGiam', $giaGiam);
-    $stmt->bindParam(':ngayBatDau', $ngayBatDau);
-    $stmt->bindParam(':ngayKetThuc', $ngayKetThuc);
+        // Prepare and execute statement
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':tenUuDai', $tenUuDai);
+        $stmt->bindParam(':moTa', $moTa);
+        $stmt->bindParam(':giaGiam', $giaGiam);
+        $stmt->bindParam(':ngayBatDau', $ngayBatDau);
+        $stmt->bindParam(':ngayKetThuc', $ngayKetThuc);
 
-    if ($stmt->execute()) {
-        $response = array(
-            'status' => 'success',
-            'message' => 'Cập nhật thành công'
-        );
-    } else {
-        $errorInfo = $stmt->errorInfo();
-        $response = array(
-            'status' => 'error',
-            'message' => 'Không thể cập nhật dữ liệu.',
-            'errorInfo' => $errorInfo
-        );
-    }
+        if ($stmt->execute()) {
+            $response = array(
+                'status' => 'success',
+                'message' => 'Cập nhật thành công'
+            );
+        } else {
+            $errorInfo = $stmt->errorInfo();
+            $response = array(
+                'status' => 'error',
+                'message' => 'Không thể cập nhật dữ liệu.',
+                'errorInfo' => $errorInfo
+            );
+        }
 
-    $stmt->closeCursor();
-    $conn = null;
-    return $response;
+        $stmt->closeCursor();
+        $conn = null;
+        return $response;
 }
 // phiếu đặt phòng
-function insertPhongDat(
-    $id,
-    $soDT,
-    $email,
-    $khachHangID,
-    $soPhong,
-    $tenGoiDichVu,
-    $soNguoi,
-    $tenUuDai,
-    $ngayNhanPhong,
-    $ngayTraPhong,
-    $trangThai
-) {
+function insertPhongDat($id, $soDT, $email, $khachHangID, 
+$soPhong, $tenGoiDichVu, $soNguoi, $tenUuDai, $ngayNhanPhong, $ngayTraPhong, $trangThai){
     $conn = connect();
 
     // Lấy ID khách hàng từ cơ sở dữ liệu
@@ -522,7 +509,7 @@ function insertPhongDat(
     $query = "INSERT INTO phongdat (id_phong, id_uu_dai, id_goi_dich_vu, id_khach_hang, so_nguoi, tong_tien, ngay_dat_phong, ngay_nhan_phong, trang_thai, ngay_tra_phong) 
               VALUES (?, ?, ?, ?, ?, ?, NOW(), ?, ?, ?)";
     $stmt = $conn->prepare($query);
-    $stmt->execute(array($soPhong, $tenUuDai, $tenGoiDichVu, $khachHangID, $soNguoi, $tongTien, $ngayNhanPhong, $trangThai, $ngayTraPhong));
+    $stmt->execute(array($soPhong, $tenUuDai, $tenGoiDichVu, $khachHangID, $soNguoi, $tongTien , $ngayNhanPhong, $trangThai, $ngayTraPhong));
     $phieuDatPhongID = $conn->lastInsertId();
 
     // Commit giao dịch
@@ -530,24 +517,27 @@ function insertPhongDat(
     $transactionActive = false; // Đặt lại biến theo dõi trạng thái giao dịch
 }
 
-function updatePhongDat() {}
+function updatePhongDat(){
+
+}
 
 //user admin
 function insertAdmin($admin_name, $admin_pass, $trangThai)
 {
     $conn = connect();
 
-    // SQL statement for prepared statement
-    $sql = "INSERT INTO admin (admin_name, admin_pass, trang_thai) VALUES 
+        // SQL statement for prepared statement
+        $sql = "INSERT INTO admin (admin_name, admin_pass, trang_thai) VALUES 
         (:admin_name, :admin_pass, :trangThai)";
 
-    // Prepare and execute statement
-    $stmt = $conn->prepare($sql);
-    $stmt->bindParam(':admin_name', $admin_name);
-    $stmt->bindParam(':admin_pass', $admin_pass);
-    $stmt->bindParam(':trangThai', $trangThai);
+        // Prepare and execute statement
+        $stmt = $conn->prepare($sql);
+        $stmt->bindParam(':admin_name', $admin_name);
+        $stmt->bindParam(':admin_pass', $admin_pass);
+        $stmt->bindParam(':trangThai', $trangThai);
 
-    $stmt->execute();
+        $stmt->execute();
+
 }
 
 function deleteAdmin($id)
@@ -590,10 +580,9 @@ function deleteAdmin($id)
     return $response;
 }
 
-function updateAdmin($id, $admin_name, $admin_pass, $trangThai)
-{
+function updateAdmin($id, $admin_name, $admin_pass, $trangThai){
     try {
-
+        
         $conn = connect();
 
         // Sử dụng prepare statement để tránh SQL injection
@@ -636,8 +625,8 @@ function updateAdmin($id, $admin_name, $admin_pass, $trangThai)
 }
 
 function insertDV($tenDV, $loaiDV, $moTa, $gioiHan, $hinhAnh, $gia)
-{
-    $conn = connect();
+ {
+        $conn = connect();
 
     // SQL statement for prepared statement
     // Check if the room number already exists
@@ -650,7 +639,7 @@ function insertDV($tenDV, $loaiDV, $moTa, $gioiHan, $hinhAnh, $gia)
 
     if ($count > 0) {
         throw new Exception("Dịch vụ đã tồn tại. Vui lòng nhập tên dịch vụ khác.");
-    } else {
+    }else{
         $sql = "INSERT INTO 
         dichvu (ten_dich_vu, loai_dich_vu, gioi_han, mo_ta, don_gia, hinh_anh) 
         VALUES 
@@ -667,8 +656,7 @@ function insertDV($tenDV, $loaiDV, $moTa, $gioiHan, $hinhAnh, $gia)
     $stmt->bindParam(':hinhAnh', $hinhAnh);
     $stmt->execute();
 }
-function deleteDV($id)
-{
+function deleteDV($id) {
     try {
         $conn = connect();
 
@@ -707,8 +695,7 @@ function deleteDV($id)
 
     return $response;
 }
-function updateDV($id, $tenDV, $loaiDV, $moTa, $gioiHan, $hinhAnh, $gia)
-{
+function updateDV($id, $tenDV, $loaiDV, $moTa, $gioiHan, $hinhAnh, $gia) {
     try {
         $conn = connect();
 
@@ -788,6 +775,7 @@ function updateDV($id, $tenDV, $loaiDV, $moTa, $gioiHan, $hinhAnh, $gia)
         // Đóng kết nối
         $stmt->closeCursor();
         $conn = null;
+
     } catch (PDOException $e) {
         $response = array(
             'status' => 'error',
@@ -804,8 +792,7 @@ function updateDV($id, $tenDV, $loaiDV, $moTa, $gioiHan, $hinhAnh, $gia)
 }
 
 // tìm vé máy bay
-function search_vemaybay($sdt = null, $ngayBatDau = null, $ngayKetThuc = null)
-{
+function search_vemaybay($sdt = null, $ngayBatDau = null, $ngayKetThuc = null) {
     // Kết nối đến cơ sở dữ liệu
     $conn = connect();
 
@@ -901,8 +888,7 @@ function search_vemaybay($sdt = null, $ngayBatDau = null, $ngayKetThuc = null)
     }
 }
 // tìm kiếm dịch vụ trong gói dịch vụ
-function searchDV($search)
-{
+function searchDV($search){
     // Chuẩn bị câu truy vấn SQL
     $conn = connect();
 
@@ -928,7 +914,7 @@ function searchDV($search)
             echo '<td>' . $pdv['id'] . '</td>';
             echo '<td>' . $pdv['ten_dich_vu'] . '</td>';
             echo '<td>' . number_format($pdv['don_gia'], 0, '.', '.') . '</td>';
-
+            
             echo '<td>';
             if ($pdv['loai_dich_vu'] == 'HoBoi') {
                 echo 'Hồ Bơi';
@@ -950,11 +936,10 @@ function searchDV($search)
 
     $conn = null;
 }
-function searchDVDat($search, $loai_dich_vu = null)
-{
+function searchDVDat($search, $loai_dich_vu = null) {
     // Chuẩn bị câu truy vấn SQL
     $conn = connect();
-
+    
     // Xây dựng câu lệnh SQL với điều kiện tìm kiếm tên dịch vụ
     $sql = "SELECT * FROM dichvu WHERE ten_dich_vu LIKE :search";
 
@@ -1010,8 +995,7 @@ function searchDVDat($search, $loai_dich_vu = null)
 }
 
 
-function searchNV($searchTen, $phongBan)
-{
+function searchNV($searchTen, $phongBan){
     // Chuẩn bị câu truy vấn SQL
     $conn = connect();
     try {
@@ -1025,9 +1009,9 @@ function searchNV($searchTen, $phongBan)
         if (!empty($searchTen)) {
             $sql .= " AND ho_ten LIKE :searchTen";
         }
-        if ($phongBan != 0) {
+        if ($phongBan!=0) {
             $sql .= " AND phong_ban = :phongBan";
-        } else if ($phongBan == 0 && empty($searchTen)) {
+        } else if($phongBan ==0 && empty($searchTen) ) {
             // Nếu không có từ khóa tìm kiếm, lấy tất cả dịch vụ
             $sql = "SELECT * FROM nhanvien ";
             $stmt = $conn->prepare($sql);
@@ -1051,23 +1035,31 @@ function searchNV($searchTen, $phongBan)
                 echo '<tr>';
                 echo '<td>' . $pdv['id'] . '</td>';
                 echo '<td>' . $pdv['ho_ten'] . '</td>';
-
+                
                 echo '<td>';
-                if ($pdv['phong_ban'] == 'AD') {
-                    echo 'Admin';
-                } else if ($pdv['phong_ban'] == 'LT') {
-                    echo 'Lễ Tân';
-                } else if ($pdv['phong_ban'] == 'DV-Spa') {
-                    echo 'Dịch vụ Spa';
-                } else if ($pdv['phong_ban'] == 'DV-NhaHang') {
-                    echo 'Dịch vụ Nhà hàng';
-                } else if ($pdv['phong_ban'] == 'DV-Gym') {
-                    echo 'Dịch vụ Gym';
-                } else if ($pdv['phong_ban'] == 'DV-Golf') {
-                    echo 'Dịch vụ Golf';
-                } else if ($pdv['phong_ban'] == 'DV-HoBoi') {
-                    echo 'Dịch vụ Hồ bơi';
-                }
+                    if($pdv['phong_ban'] == 'AD')
+                    {
+                        echo 'Admin';
+                    }else if($pdv['phong_ban'] == 'LT')
+                    {
+                        echo 'Lễ Tân';
+                    }else if($pdv['phong_ban'] == 'DV-Spa')
+                    {
+                        echo 'Dịch vụ Spa';
+                    }else if($pdv['phong_ban'] == 'DV-NhaHang')
+                    {
+                        echo 'Dịch vụ Nhà hàng';
+                    }else if($pdv['phong_ban'] == 'DV-Gym')
+                    {
+                        echo 'Dịch vụ Gym';
+                    }
+                    else if($pdv['phong_ban'] == 'DV-Golf')
+                    {
+                        echo 'Dịch vụ Golf';
+                    }else if($pdv['phong_ban'] == 'DV-HoBoi')
+                    {
+                        echo 'Dịch vụ Hồ bơi';
+                    }
                 echo '</td>';
                 echo '<td>' . $pdv['dia_chi'] . '</td>';
                 echo '<td>' . $pdv['id_admin'] . '</td>';
@@ -1081,3 +1073,4 @@ function searchNV($searchTen, $phongBan)
     }
     $conn = null;
 }
+?>

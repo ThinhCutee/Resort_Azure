@@ -300,7 +300,7 @@
         // Xử lý sự kiện click cho nút Chi tiết ảnh
         $(document).on('click', '#chiTietKH', function() {
             var id_khach_hang = $(this).data('id');
-            window.location.href = 'chitiet_khachhang.php?id_khach_hang=' + id_khach_hang;
+            window.location.href = 'chitiet-khachhang.php?id_khach_hang=' + id_khach_hang;
         });
 
    

@@ -91,7 +91,7 @@ $ve = $stmt->fetchAll(PDO::FETCH_ASSOC);
         'message' => 'ID khách hàng không hợp lệ.',
         'success' => false
     );
-    header("Location: ./chitiet-khachhang.php"); // Chuyển hướng người dùng về trang chủ hoặc trang khác tùy bạn
-    exit;
+    header("Location: ./chitiet-khachhang.php?id_khach_hang=" . $_GET['id_khach_hang']);
+    exit(); // Nên thêm exit để đảm bảo dừng script sau khi chuyển hướng
 }
 ?>

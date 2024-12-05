@@ -5,7 +5,7 @@
     }
     include_once('inc/database.php');
     $conn = connect();
-    $pnks = show("SELECT * FROM phongdat");
+    $pnks = show("SELECT * FROM phongdat order by ngay_dat_phong asc");
     $ks = show("SELECT * FROM khachsan");
     $p = show("SELECT * FROM phong");
 ?>
@@ -120,6 +120,7 @@
                             
                         </div>
                         <button type="submit" class="btn btn-primary">Đặt phòng</button>
+                        <button id="btnCheckout" type="submit" class="btn btn-warning">Check-out</button>
                     </form>
                     <?php
                     if (isset($_SESSION['response'])) {
@@ -531,6 +532,11 @@ $pnks = show("SELECT *
         xhr.send('soDT=' + soDT);
     });
 
+    // Xử lý sự kiện click cho nút check-out
+    $(document).on('click', '#btnCheckout', function() {
+                var id_goi_dich_vu = $(this).data('id');
+                window.location.href = 'nhanvien.php';
+            });
 
 
 

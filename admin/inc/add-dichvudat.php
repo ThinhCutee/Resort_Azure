@@ -73,12 +73,11 @@ try {
 
             // Insert dữ liệu vào bảng dichvudat
             $insertSql = "INSERT INTO dichvudat (id_phong_dat, id_dich_vu, ngay_dat, trang_thai, so_lan_su_dung) 
-                          VALUES (:id_phong_dat, :id_dich_vu, NOW(), :trang_thai, :so_lan_su_dung)";
+                          VALUES (:id_phong_dat, :id_dich_vu, NOW(), :trang_thai, '0')";
             $stmtInsert = $conn->prepare($insertSql);
             $stmtInsert->bindParam(':id_phong_dat', $idPhongDat);
             $stmtInsert->bindParam(':id_dich_vu', $idDichVu);
             $stmtInsert->bindParam(':trang_thai', $trang_thai);
-            $stmtInsert->bindParam(':so_lan_su_dung', $gioiHan);
             $stmtInsert->execute();
         }
     }

@@ -63,10 +63,10 @@
                     <div class="row mb-3">
                         <div class="col-md-4">
                             <label for="id_goi" class="form-label">ID gói dịch vụ</label>
-                            <!-- <input type="text" class="form-control" disabled 
+                            <input type="text" class="form-control" disabled 
                             value="<?php echo isset($_GET['id_goi_dich_vu']) ? intval($_GET['id_goi_dich_vu']) : 0; ?>">
                             <input type="hidden" name="id_goi_dich_vu" 
-                            value="<?php echo isset($_GET['id_goi_dich_vu']) ? intval($_GET['id_goi_dich_vu']) : 0; ?>"> -->
+                            value="<?php echo isset($_GET['id_goi_dich_vu']) ? intval($_GET['id_goi_dich_vu']) : 0; ?>">
                         </div>
                         <div class="col-md-4">
                             <label for="id_phong" class="form-label">Giá gói dịch vụ</label>

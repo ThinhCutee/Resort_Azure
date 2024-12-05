@@ -94,9 +94,9 @@
             </div>
             <!-- phòng đặt -->
             <div class="col-md-12 pt-5">
-                
+            <h2>Phòng đặt</h2>
             <div class="table-responsive" id="collapseKH">
-                <h2>Phòng đặt</h2>
+                
                 <table class="table table-striped table-sm table-bordered pt-6 mt-4">
                     <thead>
                         <tr>
@@ -104,13 +104,13 @@
                             <th>Mã ưu đãi</th>
                             <th>Mã phòng</th>
                             <th>Tên gói dịch vụ</th>
-                            <th>Số ĐT</th>
                             <th>Số người</th>
                             <th>Ngày đặt phòng</th>
                             <th>Ngày nhận phòng</th>
                             <th>Ngày trả phòng</th>
                             <th>Tổng tiền</th>
                             <th>Trạng thái</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <?php if (!empty($phongdat)): ?>
@@ -135,16 +135,6 @@
                                 echo $tenGoiDichVu;
                             ?>
                             </td>
-                            <td>
-                                <?php
-                                // Lấy Số ĐT từ bảng khachhang
-                                $query = "SELECT sdt FROM khachhang WHERE id = ?";
-                                $stmt = $conn->prepare($query);
-                                $stmt->execute(array($pd['id_khach_hang']));
-                                $soDT = $stmt->fetchColumn();
-                                echo $soDT;
-                                ?>
-                            </td>
                             <td><?php echo $pd['so_nguoi']; ?></td>
                             <td><?php echo $pd['ngay_dat_phong']; ?></td>
                             <td><?php echo $pd['ngay_nhan_phong']; ?></td>
@@ -156,6 +146,18 @@
                                     echo "Hoàn thành";
                                 else echo "Đã hủy";
                                 ?></td>
+                            <td>
+                            <?php
+                                if ($pd['is_check_out'] == 0) {
+                                    echo "<button id='btnCTCheckout' class='btn btn-warning'
+                                        data-id='".$pd['id']."'>
+                                        <i class='bi bi-sign-turn-slight-right-fill'></i> Checkout</button>";
+                                } else {
+                                    echo "Đã checkout";
+                                }
+                                ?>
+
+                            </td>
                         </tr>
                         <?php endforeach; ?>
                     <?php else: ?>
@@ -171,9 +173,9 @@
     <!-- Dịch vụ đặt-->
     <!-- xem -->
     <div class="col-md-12 pt-5">
-                
+    <h2>Dịch vụ đặt thêm</h2>
                 <div class="table-responsive" id="collapseKH">
-                    <h2>Dịch vụ đặt thêm</h2>
+                    
                     <table class="table table-striped table-sm table-bordered pt-6 mt-4">
                         <thead>
                             <tr>
@@ -217,9 +219,9 @@
     <!-- vé máy bay  -->
      <!-- xem -->
      <div class="col-md-12 pt-5">
-                
+     <h2>Vé máy bay</h2>
                 <div class="table-responsive" id="collapseKH">
-                    <h2>Vé máy bay</h2>
+                    
                     <table class="table table-striped table-sm table-bordered pt-6 mt-4">
                         <thead>
                             <tr>
@@ -433,6 +435,12 @@
                 modal.show();
             });
         });
+        $(document).on('click', '#btnCTCheckout', function() {
+            var id_phong_dat = $(this).data('id');
+            window.location.href = './chitiet-checkout.php?id_phong_dat=' + id_phong_dat;
+        });
+
+
     });
 </script>
 

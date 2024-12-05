@@ -7,6 +7,7 @@
     $gdv = show("SELECT 
         dvdat.id AS id_dich_vu_dat,
         dv.ten_dich_vu as ten_dich_vu,
+        dv.gioi_han as gioi_han,
         kh.sdt AS so_dien_thoai_khach_hang,
         dvdat.ngay_dat as ngay_dat,
         dv.don_gia as don_gia,
@@ -175,12 +176,14 @@
                     <thead>
                         <tr>
                             <th scope="col" width="2%">ID</th>
-                            <th scope="col" width="5%">Số ĐT</th>
+                            <th scope="col" width="3%">Số ĐT</th>
                             <th scope="col" width="15%">Tên gói dịch vụ</th>
                             <th scope="col" width="5%">Giá</th>
-                            <th scope="col" width="5%">Ngày đặt</th>
-                            <th scope="col" width="8%">Số lần sử dụng</th>
+                            <th scope="col" width="8%">Ngày đặt</th>
+                            <th scope="col" width="8%">Giới hạn SD</th>
+                            <th scope="col" width="8%">Đã sử dụng</th>
                             <th scope="col" width="10%">Trạng thái TT</th>
+                            <th scope="col" width="20%">Action</th>
                         </tr>
                     </thead>
                 <tbody>
@@ -191,6 +194,7 @@
                         <td><?php echo $pnk['ten_dich_vu'] ?></td>
                         <td><?php echo number_format($pnk['don_gia'], 0, '.', '.'); ?></td>
                         <td><?php echo $pnk['ngay_dat'] ?></td>
+                        <td><?php echo $pnk['gioi_han'] ?></td>
                         <td><?php echo $pnk['so_lan_su_dung'] ?></td>
                         <td><?php if( $pnk['trang_thai']==0)
                             {
@@ -199,6 +203,16 @@
                                  echo "Đã thanh toán";
                             }
                         ?></td>
+                        <td>
+                            <!-- hủy -->
+                            <button id="deleteBtn" class="btn btn-danger m-2"
+                            data-id="<?php echo $pnk['id_dich_vu_dat']?>"><i class="bi bi-trash-fill"></i> Hủy</i></button>
+                            <!-- checkin -->
+                            <button id="btnCheckinDV" class="btn btn-info"
+                            data-id="<?php echo $pnk['id_dich_vu_dat']?>"
+                            >    
+                            <i class="bi bi-building-fill-check"></i> Check-in</button>
+                        </td>
                             </tr>
                         <?php } ?>
                         </tbody>
@@ -379,39 +393,117 @@
 });
 
     $(document).ready(function () {
-    $('#soDT').on('blur', function () {
-        var soDT = $(this).val(); // Lấy giá trị số điện thoại từ input
+            $('#soDT').on('blur', function () {
+                var soDT = $(this).val(); // Lấy giá trị số điện thoại từ input
 
-        // Gọi Ajax để kiểm tra số điện thoại
+                // Gọi Ajax để kiểm tra số điện thoại
+                $.ajax({
+                    url: 'inc/check_sdt_email-dvdat.php', // Đường dẫn tới file PHP xử lý
+                    method: 'POST',
+                    data: { soDT: soDT }, // Gửi số điện thoại tới server
+                    success: function (response) {
+                        if (response.trim() === 'EXPIRED') {
+                            // Nếu phản hồi là "EXPIRED", hiển thị thông báo lỗi
+                            alert('Không tìm thấy phòng đặt của khách hàng trong thòi gian hiện tại!!');
+                            $('#soDT').val(''); // Xóa giá trị của số điện thoại
+                            $('#email').val(''); // Xóa giá trị của email
+                        } else if (response.trim() !== '') {
+                            // Hiển thị email nếu hợp lệ
+                            $('#email').val(response);
+                        } else {
+                            // Trường hợp khác (dự phòng)
+                            alert('Không tìm thấy thông tin khách hàng.');
+                            $('#soDT').val('');
+                            $('#email').val('');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Lỗi:', error);
+                        alert('Có lỗi xảy ra trong quá trình kiểm tra số điện thoại.');
+                    }
+                });
+            });
+        });
+
+        //lắng nghe sự kiện cho nút XÓA gói dịch vụ
+        $(document).on('click', '#deleteBtn', function(e) {
+                e.preventDefault();
+                // Lấy mã kho từ thuộc tính data
+                var id = $(this).data('id');
+                // console.log(maKho)
+                // Kiểm tra nếu người dùng chắc chắn muốn xóa
+                var isConfirmed = confirm('Bạn có chắc chắn muốn hủy đặt?');
+
+                if (isConfirmed && id) {
+                    // Thực hiện Ajax request khi người dùng nhấp vào nút xóa
+                    $.ajax({
+                        url: 'inc/delete-dichvu-dat.php', // Đường dẫn tới file PHP xử lý xóa trên server
+                        method: 'POST',
+                        data: { id: id },
+                        dataType: 'json',
+                        success: function(response) {
+                            // Xử lý phản hồi từ server
+                            alert(response.message);
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Có lỗi xảy ra trong quá trình xử lý yêu cầu.');
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            });
+             
+       //check in
+       $(document).on('click', '#btnCheckinDV', function() {
+        var id_dich_vu_dat = $(this).data('id'); // Lấy ID dịch vụ từ thuộc tính data-id
+
+        // Gửi yêu cầu AJAX để kiểm tra số lần sử dụng và giới hạn dịch vụ
         $.ajax({
-            url: 'inc/check_sdt_email-dvdat.php', // Đường dẫn tới file PHP xử lý
-            method: 'POST',
-            data: { soDT: soDT }, // Gửi số điện thoại tới server
-            success: function (response) {
-                if (response.trim() === 'EXPIRED') {
-                    // Nếu phản hồi là "EXPIRED", hiển thị thông báo lỗi
-                    alert('Khách hàng đã hết hạn đặt dịch vụ. Chỉ được đặt trong thời gian nghỉ dưỡng và sau ngày trả phòng 24 giờ.');
-                    $('#soDT').val(''); // Xóa giá trị của số điện thoại
-                    $('#email').val(''); // Xóa giá trị của email
-                } else if (response.trim() !== '') {
-                    // Hiển thị email nếu hợp lệ
-                    $('#email').val(response);
+            url: 'inc/checkin-check.php', // Tạo một file mới để kiểm tra và xử lý
+            type: 'POST',
+            data: {
+                id_dich_vu_dat: id_dich_vu_dat // ID của dịch vụ được gửi qua
+            },
+            success: function(response) {
+                var result = JSON.parse(response);
+
+                if (result.success) {
+                    if (result.confirm) {
+                        // Hiển thị hộp thoại xác nhận nếu số lần sử dụng vượt quá giới hạn
+                        var userConfirm = confirm(result.message); 
+                        if (userConfirm) {
+                            // Nếu người dùng xác nhận, gửi yêu cầu cập nhật số lần sử dụng
+                            $.ajax({
+                                url: 'inc/update-checkin.php', // Đường dẫn xử lý update số lần sử dụng
+                                type: 'POST',
+                                data: {
+                                    id_dich_vu_dat: id_dich_vu_dat
+                                },
+                                success: function(updateResult) {
+                                    var updateResponse = JSON.parse(updateResult);
+                                    alert(updateResponse.message); // Thông báo kết quả
+                                    location.reload(); // Reload trang để hiển thị thay đổi
+                                },
+                                error: function(xhr, status, error) {
+                                    alert("Có lỗi xảy ra. Vui lòng thử lại.");
+                                }
+                            });
+                        }
+                    } else {
+                        // Nếu không cần xác nhận, tự động cập nhật
+                        alert(result.message);
+                        location.reload();
+                    }
                 } else {
-                    // Trường hợp khác (dự phòng)
-                    alert('Không tìm thấy thông tin khách hàng.');
-                    $('#soDT').val('');
-                    $('#email').val('');
+                    alert(result.message); // Thông báo lỗi nếu không thành công
                 }
             },
-            error: function (xhr, status, error) {
-                console.error('Lỗi:', error);
-                alert('Có lỗi xảy ra trong quá trình kiểm tra số điện thoại.');
+            error: function(xhr, status, error) {
+                alert("Có lỗi xảy ra. Vui lòng thử lại.");
             }
         });
     });
-});
-
-
 
     });
 </script>
