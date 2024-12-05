@@ -1,0 +1,77 @@
+:root {
+  --teal: #1f497d;
+  --teal_hover: #61bee6;
+}
+* {
+  font-family: "Poppins", sans-serif;
+}
+.h-font {
+  font-family: "Merienda", cursive;
+}
+html,
+body {
+  position: relative;
+  height: 100%;
+}
+
+body {
+  background: #eee;
+  font-family: Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-size: 14px;
+  color: #000;
+  margin: 0;
+  padding: 0;
+}
+
+swiper-container {
+  width: 100%;
+  height: 100%;
+}
+
+swiper-slide {
+  background-position: center;
+  background-size: cover;
+}
+
+swiper-slide img {
+  display: block;
+  width: 100%;
+}
+.custom-bg {
+  background-color: var(--teal);
+  border: 1px solid var(--teal);
+}
+.custom-bg:hover {
+  background-color: var(--teal_hover);
+  border: 1px solid var(--teal_hover);
+}
+.availability-form {
+  margin-top: -50px;
+  z-index: 2;
+  position: relative;
+}
+@media screen and (max-width: 575px) {
+  .availability-form {
+    margin-top: 25px;
+    padding: 0 35px;
+  }
+}
+.h-line{
+  width: 90px;
+  margin: 0 auto;
+  height: 1.7px;
+}
+.nav-bor {
+  border-bottom: 1px solid #1f497d !important;
+  }
+.alert-success {
+  animation-duration: 1s;
+}
+@keyframes fadeOut {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+.fade-out {
+  animation-name: fadeOut;
+}
