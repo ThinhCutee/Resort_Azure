@@ -3,13 +3,16 @@ session_start();
 include("database.php");
 
 $conn = connect(); // Kết nối đến CSDL
-
+// Bật hiển thị lỗi trong PHP (nếu cần thiết)
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
 // Lấy dữ liệu từ yêu cầu POST
-$sdt = $_POST['sdt'];
-$email = $_POST['email'];
-$gia = $_POST['gia'];
-$trang_thai = $_POST['trang_thai'];
-$selected_ids = $_POST['selected_ids']; // Mảng các ID dịch vụ cần cập nhật
+$sdt = isset($_POST['sdt']) ? $_POST['sdt'] : '';
+$gia = isset($_POST['gia']) ? $_POST['gia'] : '';
+$email = isset($_POST['email']) ? $_POST['email'] : '';
+$id_phong_dat = isset($_POST['id_phong_dat']) ? $_POST['id_phong_dat'] : '';
+$trang_thai = isset($_POST['trang_thai']) ? $_POST['trang_thai'] : '';
+$selected_ids = isset($_POST['selected_ids']) ? $_POST['selected_ids'] : [];
 
 // Kiểm tra dữ liệu đầu vào
 if (empty($sdt) || empty($email) || empty($selected_ids)) {
@@ -41,22 +44,22 @@ try {
 
     $khachHangID = $khachHang['id']; // Sửa lại lấy đúng id khách hàng
 
-    // Lấy ID phòng đặt của khách hàng
-    $queryPhongDat = "SELECT d.id
-    FROM phongdat d 
-    WHERE d.id_khach_hang = :id_khach_hang 
-    AND ( CURDATE() BETWEEN d.ngay_nhan_phong AND d.ngay_tra_phong OR TIMESTAMPDIFF(HOUR, d.ngay_tra_phong, NOW()) <= 24 );";
-    $stmtPhongDat = $conn->prepare($queryPhongDat);
-    $stmtPhongDat->bindParam(':id_khach_hang', $khachHangID);
-    $stmtPhongDat->execute();
+    // // Lấy ID phòng đặt của khách hàng
+    // $queryPhongDat = "SELECT d.id
+    // FROM phongdat d 
+    // WHERE d.id_khach_hang = :id_khach_hang 
+    // AND ( CURDATE() BETWEEN d.ngay_nhan_phong AND d.ngay_tra_phong OR TIMESTAMPDIFF(HOUR, d.ngay_tra_phong, NOW()) <= 24 );";
+    // $stmtPhongDat = $conn->prepare($queryPhongDat);
+    // $stmtPhongDat->bindParam(':id_khach_hang', $khachHangID);
+    // $stmtPhongDat->execute();
 
-    $phongDat = $stmtPhongDat->fetch(PDO::FETCH_ASSOC);
+    // $phongDat = $stmtPhongDat->fetch(PDO::FETCH_ASSOC);
 
-    if (!$phongDat) {
-        throw new Exception('Khách hàng chưa đặt phòng.');
-    }
+    // if (!$phongDat) {
+    //     throw new Exception('Khách hàng chưa đặt phòng.');
+    // }
 
-    $idPhongDat = $phongDat['id'];
+    // $idPhongDat = $phongDat['id'];
 
     // Insert dữ liệu vào bảng dichvudat cho mỗi dịch vụ được chọn
     foreach ($selected_ids as $idDichVu) {
@@ -75,7 +78,7 @@ try {
             $insertSql = "INSERT INTO dichvudat (id_phong_dat, id_dich_vu, ngay_dat, trang_thai, so_lan_su_dung) 
                           VALUES (:id_phong_dat, :id_dich_vu, NOW(), :trang_thai, '0')";
             $stmtInsert = $conn->prepare($insertSql);
-            $stmtInsert->bindParam(':id_phong_dat', $idPhongDat);
+            $stmtInsert->bindParam(':id_phong_dat', $id_phong_dat);
             $stmtInsert->bindParam(':id_dich_vu', $idDichVu);
             $stmtInsert->bindParam(':trang_thai', $trang_thai);
             $stmtInsert->execute();

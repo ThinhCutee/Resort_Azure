@@ -41,10 +41,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             'message' => "Lỗi cơ sở dữ liệu: " . $e->getMessage()
         );
     } catch (Exception $e) {
-        // Rollback nếu có lỗi khác
-        if ($conn->inTransaction()) {
-            $conn->rollBack();
-        }
 
         $response = array(
             'success' => false,

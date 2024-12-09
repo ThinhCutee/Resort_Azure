@@ -11,6 +11,7 @@
             <a href="index.php" class="d-inline-block mb-2 text-dark text-decoration-none">Home</a><br>
             <a href="rooms.php" class="d-inline-block mb-2 text-dark text-decoration-none">Phòng</a><br>
             <a href="services.php" class="d-inline-block mb-2 text-dark text-decoration-none">Dịch vụ</a><br>
+            <a href="vemaybay.php" class="d-inline-block mb-2 text-dark text-decoration-none">Vé Máy Bay</a><br>
             <a href="contact.php" class="d-inline-block mb-2 text-dark text-decoration-none">Liên hệ</a><br>
             <a href="about.php" class="d-inline-block mb-2 text-dark text-decoration-none">Về Azure</a>
         </div>

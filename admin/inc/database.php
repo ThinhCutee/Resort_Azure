@@ -77,22 +77,10 @@ function login($admin_name, $admin_pass) {
                     direct('./dashboard/index.php');
                     break;
                 case 'LT':
-                    direct('./dashboard/index.php');
+                    direct('./user-khachhangLT.php');
                     break;
-                case 'DV-Spa':
-                    direct('./dashboard/index.php');
-                    break;
-                case 'DV-HoBoi':
-                    direct('./dashboard/index.php');
-                    break;
-                case 'DV-NhaHang':
-                    direct('./dashboard/index.php');
-                    break;
-                case 'DV-Gym':
-                    direct('./dashboard/index.php');
-                    break;
-                case 'DV-Golf':
-                    direct('./dashboard/index.php');
+                case 'DV':
+                    direct('./check-in.php');
                     break;
                 default:
                     direct('./dashboard/index.php');

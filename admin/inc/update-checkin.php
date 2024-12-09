@@ -12,7 +12,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $sql = "SELECT dv.gioi_han, dvdat.so_lan_su_dung 
                     FROM dichvudat dvdat
                     JOIN dichvu dv ON dv.id = dvdat.id_dich_vu
-                    WHERE dvdat.id = :id_dich_vu_dat AND dvdat.trang_thai = 0";
+                    WHERE dvdat.id = :id_dich_vu_dat";
             $stmt = $conn->prepare($sql);
             $stmt->bindParam(':id_dich_vu_dat', $id_dich_vu_dat, PDO::PARAM_INT);
             $stmt->execute();

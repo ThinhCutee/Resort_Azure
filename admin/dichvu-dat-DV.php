@@ -38,7 +38,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Service Panel</title>
     <style>
         
     </style>
@@ -54,7 +54,7 @@
 <body class="bg-light">
 <div class="container-fluid">
     <div class="row">
-        <?php require('inc/admin-navbar1.php') ?>
+        <?php require('inc/admin-navbarDV.php') ?>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
                 <h1 class="h2">Đặt dịch vụ</h1>
@@ -87,13 +87,13 @@
                                 </div>
                             </div>
                             <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="maPhong" class="form-label">Chọn phòng để đặt dịch vụ</label>
-                                <select class="form-control" id="maPhong" name="maPhong">
-                                    <option value="">Chưa có phòng nào</option>
-                                </select>
+                                <div class="col-md-6">
+                                    <label for="maPhong" class="form-label">Chọn phòng để đặt dịch vụ</label>
+                                    <select class="form-control" id="maPhong" name="maPhong">
+                                        <option value="">Chưa có phòng nào</option>
+                                    </select>
+                                </div>
                             </div>
-                        </div>
                             <div class="row mb-3">
                                 <div class="col-md-6">
                                     <label for="trangThai" class="form-label">Trạng thái thanh toán</label>
@@ -339,7 +339,6 @@
         });
 
         
-    
 
 $(document).ready(function () {
             $('#soDT').on('blur', function () {
@@ -365,8 +364,7 @@ $(document).ready(function () {
                                 if (result.phong && result.phong.length > 0) {
                                     result.phong.forEach(function (phong) {
                                         $('#maPhong').append('<option value="' + phong.id_phongdat + '">' + phong.so_phong + '</option>');
-                                        console.log(phong.id_phongdat);
-                                        console.log(phong.so_phong);
+                                        
                                     });
                                 } else {
                                     $('#maPhong').append('<option value="">Không có phòng nào</option>');
@@ -392,7 +390,7 @@ $(document).ready(function () {
         });
 
 // đặt dịch vụ
-$(function () {
+        $(function () {
             $("#addDichVuDat").click(function () {
                 var sdt = $("#soDT").val();
                 var gia = $("#gia").val().replace(/\./g, ''); // Loại bỏ dấu chấm khỏi giá
@@ -452,7 +450,6 @@ $(function () {
                 return false; // Ngăn hành động mặc định
             });
         });
-
 
         //lắng nghe sự kiện cho nút XÓA gói dịch vụ
         $(document).on('click', '#deleteBtn', function(e) {

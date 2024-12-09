@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>
-    receptionist Panel</title>
+    <title>Service Panel</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-SlQhp3HA0+rnjbsn6GO1S5KtZkNs4XfE8A24e5XvbtxDTxI2+o78pM1+U0Xss1oD" crossorigin="anonymous">
     <style>
@@ -31,8 +30,7 @@
 </head>
 <body>
 <div class="container-fluid bg-dark text-light p-4 d-flex align-items-center justify-content-between">
-    <h3 class="mb-0">
-    RECEPTIONIST PANEL</h3>
+    <h3 class="mb-0">SERVICE PANEL</h3>
     <a href="logout.php" class="btn btn-light btn-sm">LOG OUT</a>
 </div>
 
@@ -41,13 +39,13 @@
         <ul class="nav flex-column">
           
             <li class="nav-item">
-                <a class="nav-link text-white" href="./phieudatphongLT.php">
-                    <strong>Đặt phòng</strong>
+                <a class="nav-link text-white" href="./dichvu-dat-DV.php">
+                    <strong>Đặt dịch vụ</strong>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link text-white" href="./user-khachhangLT.php">
-                    <strong>Khách hàng</strong>
+                <a class="nav-link text-white" href="./check-in.php">
+                    <strong>Check-in</strong>
                 </a>
             </li>
         </ul>

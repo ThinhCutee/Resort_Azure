@@ -98,12 +98,12 @@
             <form action="" method="post" enctype="multipart/form-data">
                 <div class="row mb-3 mt-3">
                     <div class="col-md-6">
-                        <label for="soDT1" class="form-label">Số điện thoại khách hàng</label>
-                        <input type="text" class="form-control" id="soDT1" name="soDT1" placeholder="Nhập SĐT">
+                        <label for="soDT" class="form-label">Số điện thoại khách hàng</label>
+                        <input type="text" class="form-control" id="soDT" name="soDT" placeholder="Nhập SĐT">
                     </div>
                     <div class="col-md-6">
-                        <label for="email1" class="form-label">Email khách hàng</label>
-                        <input type="text" class="form-control" id="email1" name="email1" placeholder="Email" readonly>
+                        <label for="email" class="form-label">Email khách hàng</label>
+                        <input type="text" class="form-control" id="email" name="email" placeholder="Email" readonly>
                     </div>
                 </div>
                 <button type="button" id="timKiemDVD" class="btn btn-info">Tìm kiếm</button>
@@ -117,22 +117,33 @@
                             <th scope="col" width="3%">ID</th>
                             <th scope="col" width="10%">Họ</th>
                             <th scope="col" width="3%">Tên</th>
-                            <th scope="col" width="8%">Số điện thoại</th>
+                            <th scope="col" width="5%">Số điện thoại</th>
                             <th scope="col" width="10%">Email</th>
                             <th scope="col" width="10%">Địa chỉ</th>
                             <th scope="col" width="15%" class="text-center">Action</th>
                         </tr>
                     </thead>
                 <tbody>
-               
-                        </tbody>
-                    </table>
-                    
-                </div>
-            </div>
-        </main>
-    </div>
-</div>
+                <?php foreach ($gdv as $pnk) { ?>
+                    <tr>
+                        <td><?php echo $pnk['id'] ?></td>
+                        <td><?php echo $pnk['ho'] ?></td>
+                        <td><?php echo $pnk['ten'] ?></td>
+                        <td><?php echo $pnk['sdt'] ?></td>
+                        <td><?php echo $pnk['email'] ?></td>
+                        <td><?php echo $pnk['dia_chi'] ?></td>
+                        <td class="d-flex justify-content-center align-items-center">
+                            <button class="btn btn-primary updateBtn m-2"
+                                    data-id="<?php echo $pnk['id'] ?>"
+                                    data-ho="<?php echo $pnk['ho'] ?>"
+                                    data-ten="<?php echo $pnk['ten'] ?>"
+                                    data-email="<?php echo $pnk['email'] ?>"
+                                    data-sdt="<?php echo $pnk['sdt'] ?>"
+                                    data-diaChi="<?php echo $pnk['dia_chi'] ?>"
+                                    >
+                                <i class="fa fa-pencil">Sửa</i></button>
+
+
 <!-- Modal Bootstrap -->
 <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
@@ -175,7 +186,7 @@
                                 <textarea class="form-control" id="updateDiaChi" name="updateDiaChi" placeholder="Nhập Địa chỉ"></textarea>    
                         </div>
                     </div> 
-                    <button type="button" class="btn btn-primary c" id="updateUserBtn">Lưu thay đổi</button>
+                    <button type="submit" class="btn btn-primary" id="updateUserBtn">Lưu thay đổi</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
                 </form>
             </div>
@@ -183,6 +194,22 @@
     </div>
 </div>
 <!-- End Modal -->
+<button id="deleteBtn" class="btn btn-danger m-2" data-id="<?php echo $pnk['id']?>"><i class="fa fa-trash">Xóa</i></button>
+<button id="chiTietKH" class="btn btn-warning" data-id="<?php echo $pnk['id']?>"><i class="bi bi-ticket-detailed-fill"></i>Chi tiết</i></button>
+
+
+                                </td>
+                    </tr>
+                        <?php } ?>
+                        </tbody>
+                    </table>
+                    
+                </div>
+            </div>
+        </main>
+    </div>
+</div>
+
 <?php include_once('inc/scripts.php')?>
 <!-- <script src="./admin/js/add-room.php"></script> -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
@@ -191,177 +218,23 @@
     
     // SỬA gói dịch vụ
     document.addEventListener('DOMContentLoaded', function () {
-        
-        //lắng nghe sự kiện cho nút XÓA gói dịch vụ
-        $(document).on('click', '.btnDelete', function(e) {
-                e.preventDefault();
-                // Lấy mã kho từ thuộc tính data
-                var id = $(this).data('id');
-                // console.log(maKho)
-                // Kiểm tra nếu người dùng chắc chắn muốn xóa
-                var isConfirmed = confirm('Bạn có chắc chắn muốn xóa?');
-
-                if (isConfirmed && id) {
-                    // Thực hiện Ajax request khi người dùng nhấp vào nút xóa
-                    $.ajax({
-                        url: 'inc/delete-user-khachhang.php', // Đường dẫn tới file PHP xử lý xóa trên server
-                        method: 'POST',
-                        data: { id: id },
-                        dataType: 'json',
-                        success: function(response) {
-                            // Xử lý phản hồi từ server
-                            alert(response.message);
-                            location.reload();
-                        },
-                        error: function(xhr, status, error) {
-                            alert('Có lỗi xảy ra trong quá trình xử lý yêu cầu.');
-                            console.error('Error:', error);
-                        }
-                    });
-                }
-            });
-
-        // Xử lý sự kiện click cho nút Chi tiết ảnh
-        $(document).on('click', '#chiTietKH', function() {
-            var id_khach_hang = $(this).data('id');
-            window.location.href = 'chitiet-khachhang.php?id_khach_hang=' + id_khach_hang;
-        });
-
-// XỬ LÝ TÌM KIẾM KHÁCH HÀNG
-$(document).ready(function () {
-            $('#soDT1').on('blur', function () {
-                var soDT = $(this).val(); // Lấy giá trị số điện thoại từ input
-
-                // Gọi Ajax để kiểm tra số điện thoại
-                $.ajax({
-                    url: 'inc/check_sdt_email-khachhang.php', // Đường dẫn tới file PHP xử lý
-                    method: 'POST',
-                    data: { soDT: soDT }, // Gửi số điện thoại tới server
-                    success: function (response) {
-                        try {
-                            var result = JSON.parse(response);
-
-                            if (result.status === 'success') {
-                                // Hiển thị email khách hàng
-                                $('#email1').val(result.email);
-
-                                
-                            } else {
-                                // Hiển thị lỗi nếu không tìm thấy
-                                alert(result.message);
-                                $('#soDT1').val(''); // Xóa số điện thoại
-                                $('#email1').val(''); // Xóa email
-                               
-                            }
-                        } catch (e) {
-                            console.error('Lỗi khi xử lý phản hồi:', e);
-                            alert('Có lỗi xảy ra trong quá trình kiểm tra số điện thoại.');
-                        }
-                    },
-                    error: function (xhr, status, error) {
-                        console.error('Lỗi:', error);
-                        alert('Không thể kết nối đến server.');
-                    }
-                });
+        var updateButtons = document.querySelectorAll('.updateBtn');
+        updateButtons.forEach(function (button) {
+            button.addEventListener('click', function () {
+                var modal = new bootstrap.Modal(document.getElementById('myModal'), {});
+                document.getElementById('updateID').value = button.getAttribute('data-id');
+                document.getElementById('updateHo').value = button.getAttribute('data-ho');
+                document.getElementById('updateTen').value = button.getAttribute('data-ten');
+                document.getElementById('updateSdt').value = button.getAttribute('data-sdt');
+                document.getElementById('updateEmail').value = button.getAttribute('data-email');
+                document.getElementById('updateDiaChi').value = button.getAttribute('data-diaChi');
+                modal.show();
             });
         });
         
-        $(document).ready(function () {
-    // Xử lý nút Tìm kiếm
-    $('#timKiemDVD').on('click', function () {
-        var soDT = $('#soDT1').val(); // Lấy số điện thoại từ input
-
-        if (soDT === '') {
-            alert('Vui lòng nhập số điện thoại');
-            return;
-        }
-
-        // Gửi AJAX để lấy thông tin khách hàng
-        $.ajax({
-            url: 'inc/get-khachhang.php', // File xử lý lấy thông tin khách hàng
-            method: 'POST',
-            data: { soDT: soDT },
-            success: function (response) {
-                try {
-                    var result = JSON.parse(response);
-
-                    if (result.status === 'success') {
-                        // Làm sạch bảng trước khi thêm dữ liệu mới
-                        $('#dichVuTable tbody').empty();
-
-                        // Hiển thị thông tin khách hàng
-                        var khachhang = result.khachhang;
-                        $('#khachHangTable tbody').append(`
-                            <tr>
-                                <td>${khachhang.id}</td>
-                                <td>${khachhang.ho}</td>
-                                <td>${khachhang.ten}</td>
-                                <td>${khachhang.sdt}</td>
-                                <td>${khachhang.email}</td>
-                                <td>${khachhang.dia_chi}</td>
-                                <td>
-                                    <button class="btn btn-primary btnEdit" 
-                                    data-id="${khachhang.id}"
-                                    data-ho="${khachhang.ho}"
-                                    data-ten="${khachhang.ten}"
-                                    data-sdt="${khachhang.sdt}"
-                                    data-email="${khachhang.email}"
-                                    data-diachi="${khachhang.dia_chi}"
-                                    >
-                                       <i class="fa fa-pencil">Sửa</i>
-                                    </button>
-                                    <button class="btn btn-danger btnDelete" data-id="${khachhang.id}">
-                                       <i class="fa fa-trash">Xóa</i>
-                                    </button>
-                                    <button id="chiTietKH" class="btn btn-warning" data-id="${khachhang.id}">
-                                    <i class="bi bi-ticket-detailed-fill"></i>Chi tiết</i></button>
-                                </td>
-                            </tr>
-                        `);
-                    } else {
-                        // Thông báo lỗi nếu không có dữ liệu
-                        alert(result.message);
-                        $('#dichVuTable tbody').empty();
-                    }
-                } catch (e) {
-                    console.error('Lỗi khi xử lý phản hồi:', e);
-                    alert('Có lỗi xảy ra khi tải thông tin khách hàng.');
-                }
-            },
-            error: function (xhr, status, error) {
-                console.error('Lỗi:', error);
-                alert('Không thể kết nối đến server.');
-            }
-        });
-    });
-    
-
-});
-$(document).ready(function () {
-    // Lắng nghe sự kiện click cho nút "Sửa"
-    $(document).on('click', '.btnEdit', function () {
-        // Lấy dữ liệu từ các thuộc tính data- trong nút
-        var id = $(this).data('id');
-        var ho = $(this).data('ho');
-        var ten = $(this).data('ten');
-        var sdt = $(this).data('sdt');
-        var email = $(this).data('email');
-        var diaChi = $(this).data('diachi');
-        // Điền các giá trị vào các trường trong modal
-        $('#updateID').val(id);
-        $('#updateHo').val(ho);
-        $('#updateTen').val(ten);
-        $('#updateSdt').val(sdt);
-        $('#updateEmail').val(email);
-        $('#updateDiaChi').val(diaChi);
-
-        // Hiển thị modal
-        var modal = new bootstrap.Modal(document.getElementById('myModal'));
-        modal.show();
-    });
-});
-// Lắng nghe sự kiện click cho nút "Cập Nhật"
-$(document).on('click', '#updateUserBtn', function() {
+        
+        // Lắng nghe sự kiện click cho nút "Cập Nhật"
+        $(document).on('click', '#updateUserBtn', function() {
             // Lấy dữ liệu từ các input trong modal
             var updateID = $('#updateID').val();
             var updateHo = $('#updateHo').val();
@@ -399,7 +272,7 @@ $(document).on('click', '#updateUserBtn', function() {
                             var modal = bootstrap.Modal.getInstance(document.getElementById('myModal'));
                             modal.hide();
                             // Reload trang để cập nhật dữ liệu mới
-                            window.reload;
+                            location.reload();
                         }
                     },
                     error: function(xhr, status, error) {
@@ -410,6 +283,154 @@ $(document).on('click', '#updateUserBtn', function() {
             });
 
 
+        
+        //lắng nghe sự kiện cho nút XÓA gói dịch vụ
+        $(document).on('click', '#deleteBtn', function(e) {
+                e.preventDefault();
+                // Lấy mã kho từ thuộc tính data
+                var id = $(this).data('id');
+                // console.log(maKho)
+                // Kiểm tra nếu người dùng chắc chắn muốn xóa
+                var isConfirmed = confirm('Bạn có chắc chắn muốn xóa?');
+
+                if (isConfirmed && id) {
+                    // Thực hiện Ajax request khi người dùng nhấp vào nút xóa
+                    $.ajax({
+                        url: 'inc/delete-user-khachhang.php', // Đường dẫn tới file PHP xử lý xóa trên server
+                        method: 'POST',
+                        data: { id: id },
+                        dataType: 'json',
+                        success: function(response) {
+                            // Xử lý phản hồi từ server
+                            alert(response.message);
+                            location.reload();
+                        },
+                        error: function(xhr, status, error) {
+                            alert('Có lỗi xảy ra trong quá trình xử lý yêu cầu.');
+                            console.error('Error:', error);
+                        }
+                    });
+                }
+            });
+
+        // Xử lý sự kiện click cho nút Chi tiết ảnh
+        $(document).on('click', '#chiTietKH', function() {
+            var id_khach_hang = $(this).data('id');
+            window.location.href = 'chitiet-khachhang.php?id_khach_hang=' + id_khach_hang;
+        });
+
+// XỬ LÝ TÌM KIẾM KHÁCH HÀNG
+$(document).ready(function () {
+            $('#soDT').on('blur', function () {
+                var soDT = $(this).val(); // Lấy giá trị số điện thoại từ input
+
+                // Gọi Ajax để kiểm tra số điện thoại
+                $.ajax({
+                    url: 'inc/check_sdt_email-dvdat.php', // Đường dẫn tới file PHP xử lý
+                    method: 'POST',
+                    data: { soDT: soDT }, // Gửi số điện thoại tới server
+                    success: function (response) {
+                        try {
+                            var result = JSON.parse(response);
+
+                            if (result.status === 'success') {
+                                // Hiển thị email khách hàng
+                                $('#email').val(result.email);
+
+                                // Làm sạch danh sách select trước khi thêm dữ liệu mới
+                                $('#maPhong').empty();
+
+                                // Thêm tùy chọn phòng vào select
+                                if (result.phong && result.phong.length > 0) {
+                                    result.phong.forEach(function (phong) {
+                                        $('#maPhong').append('<option value="' + phong.id_phongdat + '">' + phong.so_phong + '</option>');
+                                        console.log(phong.id_phongdat);
+                                        console.log(phong.so_phong);
+                                    });
+                                } else {
+                                    $('#maPhong').append('<option value="">Không có phòng nào</option>');
+                                }
+                            } else {
+                                // Hiển thị lỗi nếu không tìm thấy
+                                alert(result.message);
+                                $('#soDT').val(''); // Xóa số điện thoại
+                                $('#email').val(''); // Xóa email
+                                $('#maPhong').empty().append('<option value="">Không có phòng nào</option>');
+                            }
+                        } catch (e) {
+                            console.error('Lỗi khi xử lý phản hồi:', e);
+                            alert('Có lỗi xảy ra trong quá trình kiểm tra số điện thoại.');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Lỗi:', error);
+                        alert('Không thể kết nối đến server.');
+                    }
+                });
+            });
+        });
+        
+    /// Xử lý tìm kiếm
+    $(document).ready(function () {
+    // Xử lý nút Tìm kiếm
+    $('#timKiemDVD').on('click', function () {
+        var soDT = $('#soDT').val();
+        if (id_phong_dat === '') {
+            alert('Vui lòng nhập số điện thoại');
+            return;
+        }
+
+        // Gửi AJAX để lấy danh sách dịch vụ
+        $.ajax({
+            url: 'inc/get_khachhang.php', // File xử lý lấy dịch vụ
+            method: 'POST',
+            data: { id_phong_dat: id_phong_dat,
+             }, // Gửi mã phòng
+            success: function (response) {
+                try {
+                    var result = JSON.parse(response);
+
+                    if (result.status === 'success') {
+                        // Làm sạch bảng trước khi thêm dữ liệu mới
+                        $('#dichVuTable tbody').empty();
+
+                        // Duyệt danh sách dịch vụ và thêm vào bảng
+                        result.dichVu.forEach(function (dichVu) {
+                            var trangThaiText = dichVu.trang_thai === 0 ? "Chưa thanh toán" : "Đã thanh toán";
+                            $('#dichVuTable tbody').append(`
+                                <tr>
+                                    <td>${dichVu.id_dich_vu}</td>
+                                    <td>${dichVu.ten_dich_vu}</td>
+                                    <td>${dichVu.gia}</td>
+                                    <td>${dichVu.ngay_dat}</td>
+                                    <td>${dichVu.gioi_han}</td>
+                                    <td>${dichVu.so_lan_su_dung}</td>
+                                    <td>${trangThaiText}</td>
+                                    <td>
+                                        <button class="btn btn-info btnDelete" data-id="${dichVu.id_dich_vu}">
+                                        <i class="bi bi-building-fill-check"> Check-in</i></button>
+                                    </td>
+                                </tr>
+                            `);
+                            
+                        });
+                    } else {
+                        // Thông báo lỗi nếu không có dữ liệu
+                        alert(result.message);
+                        $('#dichVuTable tbody').empty();
+                    }
+                } catch (e) {
+                    console.error('Lỗi khi xử lý phản hồi:', e);
+                    alert('Có lỗi xảy ra khi tải danh sách dịch vụ.');
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('Lỗi:', error);
+                alert('Không thể kết nối đến server.');
+            }
+        });
+    });
+});
 
     });
 </script>

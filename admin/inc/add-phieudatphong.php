@@ -91,7 +91,7 @@ try {
             $query = "INSERT INTO dichvudat (id, id_phong_dat, id_dich_vu, ngay_dat, trang_thai, so_lan_su_dung) 
                       VALUES (NULL, ?, ?, NOW(), ?, ?)";
             $stmt = $conn->prepare($query);
-            $stmt->execute(array($phieuDatPhongID, $dichVu['id'], $trangThai, $dichVu['gioi_han']));
+            $stmt->execute(array($phieuDatPhongID, $dichVu['id'], $trangThai, '0'));
         }
     }
 

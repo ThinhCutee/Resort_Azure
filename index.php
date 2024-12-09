@@ -13,6 +13,13 @@
             display: flex;
             justify-content: space-between;
         }
+
+        #chatra {
+            position: fixed !important;
+            left: 10px !important;
+            bottom: 10px !important;
+            z-index: 9999;
+        }
     </style>
 </head>
 
@@ -354,6 +361,18 @@
     <?php
     require('inc/footer.php');
     ?>
+    <script>
+        (function(d, w, c) {
+            w.ChatraID = 'CBQ3fukS8PFGnSbiW';
+            var s = d.createElement('script');
+            w[c] = w[c] || function() {
+                (w[c].q = w[c].q || []).push(arguments);
+            };
+            s.async = true;
+            s.src = 'https://call.chatra.io/chatra.js';
+            if (d.head) d.head.appendChild(s);
+        })(document, window, 'Chatra');
+    </script>
     <!-- Link JS -->
     <script src="https://cdn.botpress.cloud/webchat/v1/inject.js"></script>
     <script>
